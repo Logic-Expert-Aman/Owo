@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Main-T</title>
+</head>
+<style>
+    #input{
+        color: wheat;
+        background-color: black;
+        font-size: 20px;
+      }
+      .bw{
+        background-color: black;
+        color: aliceblue;
+      }
+      #ul{
+        width: 50px;
+        text-align: center;
+        /* display: block; */
+      }
+      .sty{
+padding: 3px;
+      }
+      #up{
+        display: inline-block;
+        vertical-align: 14px;
+      }
+      #down{
+        display: inline-block;
+        vertical-align: -14px;
+        margin-left: -34px;
+      }
+</style>
+<body class="bw">
+    <div>
+        <form id="form" action="">
+            <textarea id="input" cols="40" rows="13"></textarea><button>Send</button>
+        </form>
+    </div>
+    <div> 
+        <button id="clk" onclick="clk()" class="sty">Click</button><br>
+        <input type="text" class="sty" id="typ"><button onclick="typ()">Type</button>
+    </div>
+    <h2>Controller</h2><br>
+    <div class="sty"><button id="start" onclick="srt()">START</button>  -  ..</div>
+    <div class="sty"><input type="number" id="ul"><button id="update" onclick="upd()">UPDATE</button>  - 
+       <button id="up" onclick="up()">➕</button> <button id="down" onclick="down()">➖</button></div>
+<div class="sty"><button id="stop" onclick="stp()">STOP</button>  -  ..  <button onclick="ChSV()" id="sv" >8000</button></div>
+<div class="sty"> <button onclick="Cmd()" id="cmd" onmousewheel="scpC()">PS</button>  ...  <button onclick="Cmd()" >Kill</button></div>
+
+</body>
+<script src="/socket.io/socket.io.js"></script>
+<script >
+  // let host = "http://192.168.1.5:"
+  let host = "http://localhost:"
+let run = 0;
+  let sv = 8000
+  function ChSV() {
+    if(sv==8000)
+    sv=8001;
+    else if(sv==8001)
+    sv=8002;
+    else if(sv==8002)
+    sv=8000;
+  console.log(sv)
+  document.getElementById("sv").textContent=sv;
+  }
+  async function up() {
+    ++run;
+ document.getElementById('ul').value = run;
+    
+  }
+  async function down() {
+    --run;
+ document.getElementById('ul').value = run;
+    
+  }
+  async function Cmd(){
+alert("LKJH")
+  }
+  async function scpC(){
+alert("YOO")
+  }
+    var socket = io();
+    //   var messages = document.getElementById('notices');
+      var form = document.getElementById('form');
+      var input = document.getElementById('input');
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        if (input.value) {
+          socket.emit('new-notice', input.value);
+          input.value = '';
+        }
+      });
+      socket.on('err', function(er){
+        console.log(er.msg) 
+        console.log(er.er)
+      })
+
+      function clk(){
+        var obj={
+               name:"click"
+              };
+        fetch(host+sv+"/clk",{
+                    method:"POST",
+                    headers:{
+                        "Content-type":"application/json"
+                    },
+                    body:JSON.stringify(obj)
+                    })
+      }
+      function typ(){
+        var obj={
+               name:document.getElementById('typ').value
+              };
+        fetch(host+sv+"/type",{
+                    method:"POST",
+                    headers:{
+                        "Content-type":"application/json"
+                    },
+                    body:JSON.stringify(obj)
+                    })
+      }
+
+      
+function srt(){
+
+var obj={
+               name:"Start"
+              };
+                    fetch(host+sv+"/start",{
+                    method:"POST",
+                    headers:{
+                        "Content-type":"application/json"
+                    },
+                    body:JSON.stringify(obj)
+                    }).then(console.log("Start.."))
+
+                }
+function upd(){
+var uline = document.getElementById('ul').value;
+console.log(uline)
+var Uobj={
+                        name:"Update",
+                        ul: uline
+                    };
+                    fetch(host+sv+"/update",{
+                    method:"POST",
+                    headers:{
+                        "Content-type":"application/json"
+                    },
+                    body:JSON.stringify(Uobj)
+                    }).then(console.log("Up.."))
+
+                }
+
+function stp(){
+
+var obj={
+                        name:"Stop",
+                        dat:"Whatever..."
+                    };
+                    fetch(host+sv+"/stop",{
+                    method:"POST",
+                    headers:{
+                        "Content-type":"application/json"
+                    },
+                    body:JSON.stringify(obj)
+                    }).then(console.log("Stopped.."))
+
+                }
+
+              
+</script>
+</html>
